@@ -4,13 +4,10 @@ extern crate reqwest;
 extern crate serde_derive;
 
 extern crate serde;
-extern crate serde_json;
 
-use serde_json::Value;
-
-use std::io::Read;
-use std::process::{Command, Stdio, exit};
 use std::env;
+use std::io::Read;
+use std::process::{exit, Command, Stdio};
 
 #[derive(Serialize, Debug)]
 struct TodoistArgs {
