@@ -3,9 +3,17 @@ extern crate reqwest;
 #[macro_use]
 extern crate serde_json;
 
+#[macro_use]
+extern crate lazy_static;
+
 use std::env;
 use std::io::Read;
 use std::process::{exit, Command, Stdio};
+
+lazy_static! {
+    static ref TODOIST_API_TOKEN: String =
+        env::var("TODOIST_API_TOKEN").expect("Failed to find $TODOIST_API_TOKEN");
+}
 
 fn get_text<T: AsRef<str>>(prompt: T) -> Option<String> {
     let command = Command::new("rofi")
@@ -40,7 +48,7 @@ fn show_message<T: AsRef<str>>(message: T) {
 fn create_task(task: String) -> Result<(), String> {
     let client = reqwest::Client::new();
     let payload = json!({
-        "token": env::var("TODOIST_API_TOKEN").unwrap(),
+        "token": *TODOIST_API_TOKEN,
         "text": task
     });
     let response = client
