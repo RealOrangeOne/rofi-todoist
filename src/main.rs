@@ -21,7 +21,7 @@ fn main() {
     };
 
     let response_message = match todoist::create_task(option) {
-        Ok(_) => String::from("Success"),
+        Ok(task_name) => format!("Created task '{}' successfully.", task_name),
         Err(e) => format!("Error: {}", e),
     };
 
