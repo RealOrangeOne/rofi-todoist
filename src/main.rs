@@ -9,7 +9,7 @@ extern crate serde_json;
 use serde_json::Value;
 
 use std::io::Read;
-use std::process::{Command, Stdio};
+use std::process::{Command, Stdio, exit};
 use std::env;
 
 #[derive(Serialize, Debug)]
@@ -71,7 +71,13 @@ fn create_task(task: String) -> Result<(), String> {
 }
 
 fn main() {
-    let option = get_text("Add Task").unwrap();
+    let option = match get_text("Add Task") {
+        Some(text) => text,
+        None => {
+            println!("No text, exiting");
+            exit(1);
+        }
+    };
 
     match create_task(option) {
         Ok(_) => show_message("Success"),
