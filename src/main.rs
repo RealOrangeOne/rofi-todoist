@@ -63,8 +63,10 @@ fn main() {
         }
     };
 
-    match create_task(option) {
-        Ok(_) => show_message("Success"),
-        Err(e) => show_message(format!("Error: {}", e)),
-    }
+    let response_message = match create_task(option) {
+        Ok(_) => String::from("Success"),
+        Err(e) => format!("Error: {}", e),
+    };
+
+    show_message(response_message);
 }
