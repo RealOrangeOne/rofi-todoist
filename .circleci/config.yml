@@ -1,0 +1,21 @@
+version: 2.0
+
+jobs:
+    build:
+        docker:
+            - image: circleci/rust:1.29
+        steps:
+            - checkout
+            - restore_cache:
+                keys:
+                    - cargo-{{ checksum "Cargo.lock" }}
+            - run: rustup component add rustfmt-preview
+            - run: cargo fmt -- --write-mode=diff
+            - run: cargo search  # Update registry outside build process
+            - run: cargo build
+            - run: cargo build --release
+            - save_cache:
+                key: cargo-{{ checksum "Cargo.lock" }}
+                paths:
+                    - ~/.cargo/
+                    - target/
