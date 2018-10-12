@@ -1,5 +1,31 @@
+extern crate reqwest;
+
+#[macro_use]
+extern crate serde_derive;
+
+extern crate serde;
+extern crate serde_json;
+
+use serde_json::Value;
+
 use std::io::Read;
 use std::process::{Command, Stdio};
+use std::env;
+
+#[derive(Serialize, Debug)]
+struct TodoistArgs {
+    token: String,
+    text: String,
+}
+
+impl TodoistArgs {
+    pub fn from_task<T: AsRef<str>>(task: T) -> TodoistArgs {
+        return TodoistArgs {
+            token: env::var("TODOIST_API_TOKEN").unwrap(),
+            text: task.as_ref().to_string(),
+        };
+    }
+}
 
 fn get_text<T: AsRef<str>>(prompt: T) -> Option<String> {
     let command = Command::new("rofi")
@@ -31,9 +57,24 @@ fn show_message<T: AsRef<str>>(message: T) {
         .expect("Failed to show message");
 }
 
+fn create_task(task: String) -> Result<(), String> {
+    let client = reqwest::Client::new();
+    let response = client
+        .post("https://todoist.com/api/v7/quick/add")
+        .form(&TodoistArgs::from_task(task))
+        .send()
+        .map_err(|e| format!("{:?}", e))?;
+    return match response.error_for_status() {
+        Ok(_) => Ok(()),
+        Err(e) => Err(format!("Got {:?} from Todoist", e.status().unwrap())),
+    };
+}
+
 fn main() {
     let option = get_text("Add Task").unwrap();
-    println!("{:?}", option);
 
-    show_message(option);
+    match create_task(option) {
+        Ok(_) => show_message("Success"),
+        Err(e) => show_message(format!("Error: {}", e)),
+    }
 }
