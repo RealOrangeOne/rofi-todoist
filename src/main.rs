@@ -22,7 +22,7 @@ fn main() {
 
     let response_message = match todoist::create_task(option) {
         Ok(task_name) => format!("Created task '{}' successfully.", task_name),
-        Err(e) => format!("Error: {}", e),
+        Err(e) => todoist::format_reqwest_error(e),
     };
 
     rofi::show_message(response_message);
