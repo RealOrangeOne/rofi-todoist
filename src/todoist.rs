@@ -3,6 +3,8 @@ use reqwest;
 use serde_json::Value;
 use std::env;
 
+static TODOIST_API_URL: &str = "https://todoist.com/api/v7/quick/add";
+
 lazy_static! {
     static ref TODOIST_API_TOKEN: String =
         env::var("TODOIST_API_TOKEN").expect("Failed to find $TODOIST_API_TOKEN");
@@ -15,7 +17,7 @@ pub fn create_task(task: String) -> Result<String, String> {
         "text": task
     });
     let mut response = client
-        .post("https://todoist.com/api/v7/quick/add")
+        .post(TODOIST_API_URL)
         .form(&payload)
         .send()
         .map_err(|e| format!("{:?}", e))?;
