@@ -4,7 +4,7 @@ use serde_json::Value;
 use std::env;
 use std::error::Error;
 
-static TODOIST_API_URL: &str = "https://todoist.com/api/v7/quick/add";
+static TODOIST_API_URL: &str = "https://api.todoist.com/sync/v8/quick/add";
 
 lazy_static! {
     static ref TODOIST_API_TOKEN: String =
