@@ -6,10 +6,26 @@ extern crate serde_json;
 #[macro_use]
 extern crate lazy_static;
 
+#[cfg(feature = "notifications")]
+extern crate notify_rust;
+
 mod rofi;
 mod todoist;
 
 use std::process::exit;
+
+#[cfg(feature = "notifications")]
+pub fn show_notification<T: AsRef<str>>(message: T) {
+    use notify_rust::Notification;
+    Notification::new()
+        .appname("todoist")
+        .body(message.as_ref())
+        .show()
+        .expect("Failed to show notification");
+}
+
+#[cfg(not(feature = "notifications"))]
+pub fn show_notification<T: AsRef<str>>(_message: T) {}
 
 fn main() {
     let option = match rofi::get_text("Add Task") {
@@ -25,5 +41,11 @@ fn main() {
         Err(e) => todoist::format_reqwest_error(e),
     };
 
-    rofi::show_message(response_message);
+    if cfg!(feature = "notifications") {
+        // use system notification if available
+        show_notification(response_message);
+    } else {
+        // otherwise fall back to rofi dialog
+        rofi::show_message(response_message);
+    }
 }
