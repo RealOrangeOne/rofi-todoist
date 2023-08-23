@@ -6,6 +6,7 @@ pub fn get_text<T: AsRef<str>>(prompt: T) -> Option<String> {
         .arg("-dmenu")
         .args(&["-lines", "0"])
         .args(&["-l", "0"])
+        .args(&["-width", "-100"])
         .args(&["-p", prompt.as_ref()])
         .stdout(Stdio::piped())
         .spawn()

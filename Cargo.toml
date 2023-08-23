@@ -4,9 +4,14 @@ version = "0.1.0"
 authors = ["Jake Howard <git@theorangeone.net>"]
 repository = "https://github.com/RealOrangeOne/rofi-todoist"
 
+[features]
+default = ["notifications"]
+notifications = ["notify-rust"]
+
 [dependencies]
 lazy_static = "1.1.0"
 reqwest = "0.9.2"
 serde = "1.0.79"
 serde_derive = "1.0.79"
 serde_json = "1.0.32"
+notify-rust = { version="3", optional=true }
